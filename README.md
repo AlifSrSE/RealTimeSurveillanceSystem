@@ -190,7 +190,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-For any questions or inquiries, feel free to contact me via email at [alif.rahman.c@example.com].
+For any questions or inquiries, feel free to contact me via email at [alif.rahman.c@gmail.com].
 
 ---
 
