@@ -1,6 +1,7 @@
 import cv2
 import json
 import os
+import numpy as np
 
 zones = []
 current_zone = []
@@ -43,8 +44,6 @@ def save_zones(camera_name):
     print(f"[✓] Zones saved for {camera_name} to {config_path}")
 
 if __name__ == "__main__":
-    import numpy as np
-
     camera_name = input("Enter camera ID (e.g., store_front): ")
     video_path = input("Enter video path: ")
 
