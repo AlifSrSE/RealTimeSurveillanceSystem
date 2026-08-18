@@ -1,17 +1,21 @@
 import numpy as np
 import cv2
+import logging
 from mediapipe.solutions.pose import PoseLandmark
 
-class PostureClassifier:
-    def __init__(self):
-        self.prev_state = {}
+logger = logging.getLogger(__name__)
 
-    def classify(self, landmarks, visibility_threshold=0.5):
+class PostureClassifier:
+    def __init__(self, visibility_threshold=0.5):
+        self.prev_state = {}
+        self.visibility_threshold = visibility_threshold
+
+    def classify(self, landmarks):
         if landmarks is None:
             return "Unknown"
 
         def get_point(lm):
-            return np.array([lm.x, lm.y]) if lm.visibility > visibility_threshold else None
+            return np.array([lm.x, lm.y]) if lm.visibility > self.visibility_threshold else None
 
         keypoints = {
             "left_shoulder": get_point(landmarks.landmark[PoseLandmark.LEFT_SHOULDER]),
@@ -43,10 +47,17 @@ class PostureClassifier:
             return "Unknown"
 
 class DemographicsDetector:
-    def __init__(self):
-        # Load pre-trained models
-        self.age_net = cv2.dnn.readNetFromCaffe('age_deploy.prototxt', 'age_net.caffemodel')
-        self.gender_net = cv2.dnn.readNetFromCaffe('gender_deploy.prototxt', 'gender_net.caffemodel')
+    def __init__(self, age_proto=None, age_model=None, gender_proto=None, gender_model=None):
+        self.enabled = True
+        try:
+            if all([age_proto, age_model, gender_proto, gender_model]):
+                self.age_net = cv2.dnn.readNetFromCaffe(age_proto, age_model)
+                self.gender_net = cv2.dnn.readNetFromCaffe(gender_proto, gender_model)
+            else:
+                self.enabled = False
+        except Exception as e:
+            logger.warning(f"Failed to load demographics models: {e}")
+            self.enabled = False
 
         self.age_list = ['(0-2)', '(4-6)', '(8-12)', '(15-20)', '(25-32)', '(38-43)', '(48-53)', '(60-100)']
         self.gender_list = ['Male', 'Female']
