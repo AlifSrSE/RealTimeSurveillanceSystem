@@ -1,12 +1,8 @@
-Here's an improved version of the `README.md` file for your project that includes all the functionalities, features, and an overview of the project. This version is structured to be user-friendly, informative, and clear for developers, collaborators, or stakeholders.
-
----
-
 # Real-Time Surveillance and Analytics System 🚨
 
 ## Overview
 
-This project implements a real-time video processing system for surveillance and security purposes. It utilizes computer vision, deep learning, and data visualization techniques to detect and track people, classify their posture, identify abandoned objects, detect loitering behavior, and analyze crowd dynamics. Alerts are generated for unusual activities such as falls, crowd formation, inactivity, and abandoned objects. The system also provides detailed logs and visualizations through Flask and Streamlit dashboards for monitoring.
+This project implements a real-time video processing system for surveillance and security purposes. It utilizes computer vision, deep learning, and data visualization techniques to detect and track people, classify their posture, identify abandoned objects, detect loitering behavior, and analyze crowd dynamics. Alerts are generated for unusual activities such as falls, crowd formation, inactivity, and abandoned objects. The system also provides detailed logs and visualizations through a Streamlit dashboard for monitoring.
 
 ## Key Features
 
@@ -35,12 +31,11 @@ This project implements a real-time video processing system for surveillance and
 
 ### **6. Data Logging & Visualization**
    - Logs all important events and traffic data to CSV files and an SQLite database.
-   - **Flask Dashboard**: Basic web interface to view logs and filters (camera, start/end time).
-   - **Streamlit Dashboard**: Advanced visualization with heatmaps, zone occupancy matrix, In/Out trend charts, and alert frequency.
+   - **Streamlit Dashboard**: Advanced visualization with trend charts (In/Out), alert frequency, and zone occupancy matrix.
 
 ### **7. Notifications**
    - **Email Alerts**: Sends real-time alerts via email for fall detection, crowd formation, inactivity, and abandoned objects.
-   - **WhatsApp Alerts**: Sends real-time alerts via WhatsApp (placeholder for API integration).
+   - **WhatsApp Alerts**: Sends real-time alerts via WhatsApp using Twilio.
 
 ---
 
@@ -55,17 +50,16 @@ This project implements a real-time video processing system for surveillance and
 - `object_detector.py`: Object detection module to detect potential abandoned objects.
 - `alerts.py`: Sends real-time alerts via email and WhatsApp.
 - `db.py`: Database utility for logging events to SQLite.
+- `config.py`: Configuration loader for `config.yaml`.
 
 ### **2. Dashboards**
 
-- **Flask Dashboard**: Web-based interface for real-time logs and camera feed analysis. Allows filtering by camera ID, start time, and end time.
-- **Streamlit Dashboard**: Advanced visualization including zone heatmaps, trend charts (In/Out), alert frequency, and occupancy matrix.
+- **Streamlit Dashboard**: Advanced visualization including zone occupancy matrix, trend charts (In/Out), and alert frequency.
 
 ### **3. Data Storage**
 
 - Logs and traffic data are saved in an SQLite database and CSV files.
 - Zone counts and activity logs are saved for each camera feed and event.
-- Images (heatmaps, zone overlays) are saved in the `/logs` directory for further analysis.
 
 ---
 
@@ -88,35 +82,43 @@ env\Scripts\activate     # For Windows
 pip install -r requirements.txt
 ```
 
-### **3. Install OpenCV and Dependencies**
-Ensure you have OpenCV installed, or use the following command to install it:
+### **3. Configure Video Paths**
+Update `config.yaml` with your video file paths. Place your sample videos in `data/test_videos/` or update the paths to point to your video files.
+
+### **4. Set up Environment Variables**
+Copy `.env.example` to `.env` and fill in your email and WhatsApp/Twilio credentials if you want to enable alerts.
 
 ```bash
-pip install opencv-python-headless
+cp .env.example .env
 ```
 
-### **4. Set up SQLite Database**
-Run the following command to set up the SQLite database:
+### **5. Download Models (Optional)**
+If you want to use object detection or demographics, download the required Caffe models:
 
 ```bash
-python db.py
+python scripts/download_models.py
 ```
 
-### **5. Running the Application**
+### **6. Running the Application**
 To start processing the video feed and triggering real-time alerts:
 
 ```bash
-python main.py
+python run.py --mode camera
+```
+
+To run without GUI (e.g., in Docker or headless servers):
+
+```bash
+python run.py --mode camera --headless
 ```
 
 This will process the video from the specified camera feeds and start tracking people, detecting posture, and monitoring for inactivity, abandoned objects, and crowding.
 
-### **6. Access the Dashboards**
-- **Flask Dashboard**: Open a web browser and go to [http://localhost:5000](http://localhost:5000).
-- **Streamlit Dashboard**: Run the following command to start the Streamlit dashboard:
+### **7. Access the Dashboard**
+Run the following command to start the Streamlit dashboard:
 
 ```bash
-streamlit run streamlit_dashboard.py
+streamlit run dashboard_streamlit.py
 ```
 
 ---
@@ -131,7 +133,7 @@ streamlit run streamlit_dashboard.py
 
 ### **Alert Notifications**
 - **Email**: Uses Python's `smtplib` to send real-time alerts to a predefined email address.
-- **WhatsApp**: Placeholder function to send real-time alerts via WhatsApp (can be integrated with Twilio API for production use).
+- **WhatsApp**: Uses Twilio to send real-time alerts via WhatsApp.
 
 ### **Logging & Analytics**
 - **CSV Logs**: Event data is saved in CSV files (e.g., camera logs, zone counts).
