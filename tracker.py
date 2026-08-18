@@ -62,7 +62,7 @@ class CentroidTracker:
             for col in unused_cols:
                 self.register(input_centroids[col])
 
-            for object_id, centroid in new_tracked.items():
+            for object_id, centroid in self.objects.items():
                 if object_id not in self.object_history:
                     self.object_history[object_id] = []
                 self.object_history[object_id].append(centroid)
