@@ -1,7 +1,9 @@
 # db.py
+import os
 import sqlite3
 
 def init_db(db_path="logs/analytics.db"):
+    os.makedirs(os.path.dirname(db_path), exist_ok=True)
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
 
