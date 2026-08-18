@@ -1,25 +1,23 @@
-from datetime import datetime
+from time import time
 
 class LoiteringDetector:
-    def __init__(self, loitering_threshold=300):
-        self.loitering_threshold = loitering_threshold  # Time in seconds
-        self.loitering_objects = {}
+    def __init__(self, loitering_threshold_sec=300):
+        self.loitering_threshold_sec = loitering_threshold_sec
+        self.loitering_objects = {}  # object_id -> start_time
 
     def update(self, tracked_objects):
-        alert_text = []
-        for object_id, (cx, cy) in tracked_objects.items():
-            # If object already being tracked for loitering
-            if object_id in self.loitering_objects:
-                last_seen, timer = self.loitering_objects[object_id]
-                if (datetime.now() - last_seen).total_seconds() < self.loitering_threshold:
-                    self.loitering_objects[object_id] = (datetime.now(), timer + 1)
-                else:
-                    self.loitering_objects[object_id] = (datetime.now(), 0)
-            else:
-                self.loitering_objects[object_id] = (datetime.now(), 0)
+        alerts = []
+        current_time = time()
+        active_ids = set(tracked_objects.keys())
 
-            # Check loitering condition
-            if self.loitering_objects[object_id][1] >= self.loitering_threshold:
-                alert_text.append(f"⚠️ Loitering Detected for Object {object_id}")
+        for obj_id in list(self.loitering_objects.keys()):
+            if obj_id not in active_ids:
+                del self.loitering_objects[obj_id]
 
-        return alert_text
+        for obj_id, (cx, cy) in tracked_objects.items():
+            if obj_id not in self.loitering_objects:
+                self.loitering_objects[obj_id] = current_time
+            elif current_time - self.loitering_objects[obj_id] >= self.loitering_threshold_sec:
+                alerts.append(f"⚠️ Loitering Detected for Object {obj_id}")
+
+        return alerts
