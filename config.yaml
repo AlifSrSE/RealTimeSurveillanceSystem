@@ -1,2 +1,55 @@
+cameras:
+  store_front: "data/test_videos/front.mp4"
+  back_exit: "data/test_videos/back.mp4"
+
 line_position: 300
-video_path: "data/test_videos/sample.mp4"
+
+detection:
+  person_model: "yolov8n.pt"
+  person_conf_threshold: 0.5
+  object_model_proto: "models/MobileNetSSD_deploy.prototxt"
+  object_model_weights: "models/MobileNetSSD_deploy.caffemodel"
+  object_conf_threshold: 0.6
+
+demographics:
+  age_proto: "models/age_deploy.prototxt"
+  age_model: "models/age_net.caffemodel"
+  gender_proto: "models/gender_deploy.prototxt"
+  gender_model: "models/gender_net.caffemodel"
+  face_roi_size: 50
+
+pose:
+  min_detection_confidence: 0.5
+  min_tracking_confidence: 0.5
+
+posture:
+  visibility_threshold: 0.5
+
+loitering:
+  threshold_sec: 300
+
+alerts:
+  crowd_threshold: 10
+  abandoned_object_frames: 150
+  cooldown_sec: 60
+  email:
+    enabled: false
+  whatsapp:
+    enabled: false
+
+inactivity:
+  min_frames: 15
+  max_pixel_movement: 10
+
+zones:
+  grid: [4, 4]
+
+db:
+  path: "logs/analytics.db"
+
+tracker:
+  max_disappeared: 10
+
+logging:
+  level: "INFO"
+  file: "logs/surveillance.log"
